@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/Users/Ludovic/Documents/Dev/Android/CalendarApp/app/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-b611abe58255f6d9ec7b3f7f32fb69ed78b6f045.jar"
+        jar="/Users/Ludovic/Documents/Dev/Android/CalendarApp/app/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/libs/internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+    <item
+        dex="/Users/Ludovic/Documents/GitHub/Calendroid/app/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-65101c477b60674f6e4330c8d09a3b0b26051c67.jar"
+        jar="/Users/Ludovic/Documents/GitHub/Calendroid/app/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/libs/internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+    <item
+        dex="/Users/Ludovic/Documents/GitHub/Calendroid/app/build/intermediates/pre-dexed/debug/classes-1cd51d6196109c329b3cbfe58791ce66d7ffcace.jar"
+        jar="/Users/Ludovic/Documents/GitHub/Calendroid/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="f21927d22fe31889ecce94dd697a2e75b137e0ef"/>
+    <item
+        dex="/Users/Ludovic/Documents/Dev/Android/CalendarApp/app/build/intermediates/pre-dexed/debug/support-annotations-20.0.0-bca9cd8c8082330ef7549e0398af852faae531fd.jar"
+        jar="/Applications/Android Studio.app/sdk/extras/android/m2repository/com/android/support/support-annotations/20.0.0/support-annotations-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
+    <item
+        dex="/Users/Ludovic/Documents/Dev/Android/CalendarApp/app/build/intermediates/pre-dexed/debug/classes-13265de1cffdae48bbe14ca788698769d45af31b.jar"
+        jar="/Users/Ludovic/Documents/Dev/Android/CalendarApp/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="f21927d22fe31889ecce94dd697a2e75b137e0ef"/>
+    <item
+        dex="/Users/Ludovic/Documents/Dev/Android/CalendarApp/app/build/intermediates/pre-dexed/debug/classes-6f216d3d5597918c2427c01a67edc7d05892fc79.jar"
+        jar="/Users/Ludovic/Documents/Dev/Android/CalendarApp/app/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+    <item
+        dex="/Users/Ludovic/Documents/GitHub/Calendroid/app/build/intermediates/pre-dexed/debug/classes-721c1243c5df2812e864143addd54b62a60808ee.jar"
+        jar="/Users/Ludovic/Documents/GitHub/Calendroid/app/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+
+</pre-dex-items>
