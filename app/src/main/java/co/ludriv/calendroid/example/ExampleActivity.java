@@ -14,7 +14,7 @@ import java.util.Calendar;
 import co.ludriv.calendroid.R;
 import co.ludriv.calendroid.interfaces.YearCalendarTouchListener;
 import co.ludriv.calendroid.model.YearCalendarSelection;
-import co.ludriv.calendroid.widget.YearCalendarView;
+import co.ludriv.calendroid.view.YearCalendarView;
 
 
 public class ExampleActivity extends ActionBarActivity

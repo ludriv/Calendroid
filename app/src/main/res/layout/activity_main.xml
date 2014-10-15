@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <co.ludriv.calendroid.widget.YearCalendarView
+            <co.ludriv.calendroid.view.YearCalendarView
                 android:layout_width="match_parent"
                 android:id="@+id/year_calendar"
                 android:layout_height="wrap_content"/>

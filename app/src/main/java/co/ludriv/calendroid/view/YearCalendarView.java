@@ -1,4 +1,4 @@
-package co.ludriv.calendroid.widget;
+package co.ludriv.calendroid.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
