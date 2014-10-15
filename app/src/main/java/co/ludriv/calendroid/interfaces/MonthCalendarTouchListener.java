@@ -5,4 +5,5 @@ package co.ludriv.calendroid.interfaces;
  */
 public interface MonthCalendarTouchListener
 {
+    public void onDayClick();
 }

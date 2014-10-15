@@ -6,14 +6,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Region;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import co.ludriv.calendroid.interfaces.MonthCalendarTouchListener;
 import co.ludriv.calendroid.model.Selection;
 import co.ludriv.calendroid.utils.CalendarUtils;
 
@@ -35,21 +36,24 @@ public class MonthCalendarView extends View
     private String[] mDayNames;
     private Calendar mTodayCalendar;
     private Calendar mTempCalendar;
+    private int      mSelectedIndex;
     //
 
-    private HashMap<String, Region> mDayRegions;
+    private HashMap<Integer, RectF>    mDayRegions;
+    private MonthCalendarTouchListener mTouchListener;
 
     // configurable
-    private boolean         mIsSelectToday    = false;
-    private Selection.Shape mSelectTodayShape = Selection.Shape.CIRCLE;
+    private boolean         mIsSelectToday      = false;
+    private Selection.Shape mSelectTodayShape   = Selection.Shape.CIRCLE;
+    private boolean         mEnableDayTouches   = false;
     //
-    private int   mFirstDayOfWeek     = Calendar.MONDAY; //Calendar.MONDAY;
-    private int   mLastDayOfWeek      = Calendar.SUNDAY; //Calendar.SUNDAY;
+    private int             mFirstDayOfWeek     = Calendar.MONDAY; //Calendar.MONDAY;
+    private int             mLastDayOfWeek      = Calendar.SUNDAY; //Calendar.SUNDAY;
     //
-    private float mDayTitleLineHeight = 1;
-    private float mDayTitleHeight     = 30;
-    private float mDayTextPadding     = 20;
-    private float mWeekLineHeight     = 1;
+    private float           mDayTitleLineHeight = 1;
+    private float           mDayTitleHeight     = 30;
+    private float           mDayTextPadding     = 20;
+    private float           mWeekLineHeight     = 1;
     //
 
     //
@@ -117,6 +121,8 @@ public class MonthCalendarView extends View
         mTodayCalendar = Calendar.getInstance();
         mTempCalendar = Calendar.getInstance();
 
+        mSelectedIndex = Integer.MIN_VALUE;
+
         //
         // cache month/day names
         //
@@ -135,7 +141,7 @@ public class MonthCalendarView extends View
             }
         }
 
-        mDayRegions = new HashMap<String, Region>();
+        mDayRegions = new HashMap<Integer, RectF>();
 
         updateData();
 
@@ -220,7 +226,6 @@ public class MonthCalendarView extends View
     private void updateData()
     {
         mRowCount = CalendarUtils.getNumberOfWeeksInMonth(mCurrentYear, mCurrentMonth);
-        System.out.println("mRowCount= " + mRowCount);
     }
 
     private void update()
@@ -228,7 +233,6 @@ public class MonthCalendarView extends View
         // foo!
 
         mRowCount = CalendarUtils.getNumberOfWeeksInMonth(mCurrentYear, mCurrentMonth);
-        System.out.println("mRowCount= " + mRowCount);
 
         repaint();
     }
@@ -330,6 +334,19 @@ public class MonthCalendarView extends View
         mTempCalendar.set(mCurrentYear, mCurrentMonth, 1, 0, 0, 0);
         mTempCalendar.add(Calendar.DATE, startDayDiff);
 
+        if (mDayRegions.isEmpty())
+        {
+            for (int i = startDayDiff; i <= (lastDayOfMonth + endDayDiff + 1); i++)
+            {
+                if (i == 0)
+                {
+                    continue;
+                }
+
+                mDayRegions.put(Integer.valueOf(i), new RectF());
+            }
+        }
+
         for (int i = startDayDiff; i <= (lastDayOfMonth + endDayDiff + 1); i++)
         {
             // skip index 0
@@ -346,11 +363,19 @@ public class MonthCalendarView extends View
             }
 
             canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, (dayInCurrentMonth ? mDayCurrentMonthPaint : mDayOtherMonthPaint));
+            mDayRegions.get(i).set(dayX, dayY, dayX + dayWidth, dayY + dayHeight);
+            //
+
+            // draw block selection
+            if (mSelectedIndex == i)
+            {
+                canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, mHightlightDayPaint);
+            }
             //
 
             String dayText = String.valueOf(mTempCalendar.get(Calendar.DATE));
 
-            // draw selection
+            // TODO: draw 'event' points
             //
 
             // draw day text
@@ -364,7 +389,7 @@ public class MonthCalendarView extends View
             {
                 float sideWidth = (dayWidth - 2 * mDayTextPadding);
                 mCachedRectF.setEmpty();
-                mCachedRectF.set(dayX + mDayTextPadding * 1.5f, dayY + mDayTextPadding/2, (int) (dayX + mDayTextPadding * 1.5) + sideWidth, dayY + mDayTextPadding/2 + sideWidth);
+                mCachedRectF.set(dayX + mDayTextPadding * 1.5f, dayY + mDayTextPadding / 2, (int) (dayX + mDayTextPadding * 1.5) + sideWidth, dayY + mDayTextPadding / 2 + sideWidth);
 
                 if (mSelectTodayShape == Selection.Shape.SQUARE)
                 {
@@ -372,7 +397,7 @@ public class MonthCalendarView extends View
                 }
                 else if (mSelectTodayShape == Selection.Shape.CIRCLE)
                 {
-                    canvas.drawCircle(mCachedRectF.centerX(), mCachedRectF.centerY(), sideWidth/2, mSelectTodayPaint);
+                    canvas.drawCircle(mCachedRectF.centerX(), mCachedRectF.centerY(), sideWidth / 2, mSelectTodayPaint);
                 }
             }
             //
@@ -397,7 +422,43 @@ public class MonthCalendarView extends View
             mTempCalendar.add(Calendar.DATE, 1);
         }
 
+    }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        if (mEnableDayTouches)
+        {
+            for (Integer key : mDayRegions.keySet())
+            {
+                RectF region = mDayRegions.get(key);
+
+                if (region.contains((int) event.getX(), (int) event.getY()) && event.getAction() == MotionEvent.ACTION_UP)
+                {
+                    if (mSelectedIndex == Integer.MIN_VALUE || mSelectedIndex != key.intValue())
+                    {
+                        mSelectedIndex = key.intValue();
+
+                        if (mTouchListener != null)
+                        {
+                            mTouchListener.onDayClick();
+                        }
+                    }
+                    else
+                    {
+                        mSelectedIndex = Integer.MIN_VALUE;
+                    }
+
+                    repaint();
+                    return true;
+                }
+
+            }
+
+            return true;
+        }
+
+        return super.onTouchEvent(event);
     }
 
     public void repaint()
@@ -459,6 +520,16 @@ public class MonthCalendarView extends View
     {
         mSelectTodayShape = shape;
         repaint();
+    }
+
+    public void setTouchListener(MonthCalendarTouchListener listener)
+    {
+        mTouchListener = listener;
+    }
+
+    public void enableDayTouches(boolean enableDayTouches)
+    {
+        mEnableDayTouches = enableDayTouches;
     }
 
 }
