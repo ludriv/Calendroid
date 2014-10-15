@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 import co.ludriv.calendroid.interfaces.YearCalendarTouchListener;
+import co.ludriv.calendroid.model.Selection;
 import co.ludriv.calendroid.model.YearCalendarSelection;
 
 /**
@@ -47,14 +48,14 @@ public class YearCalendarView extends View
 
 
     // configurable
-    private boolean                    mIsSelectToday     = false;
+    private boolean         mIsSelectToday     = false;
     //
-    private int                        mFirstDayOfWeek    = Calendar.SUNDAY;
+    private int             mFirstDayOfWeek    = Calendar.SUNDAY;
     //
-    private int                        mMonthSpacing      = 10;
-    private int                        mPaddingTopDayName = 20;
-    private int                        mPaddingTopDay     = 10;
-    private YearCalendarSelection.Type mSelectionType     = YearCalendarSelection.Type.SQUARE;
+    private int             mMonthSpacing      = 10;
+    private int             mPaddingTopDayName = 20;
+    private int             mPaddingTopDay     = 10;
+    private Selection.Shape mSelectionShape    = Selection.Shape.SQUARE;
     //
 
     //
@@ -364,13 +365,13 @@ public class YearCalendarView extends View
                                 mCurrentYearCalendar.get(Calendar.MONTH) == mTempCalendar.get(Calendar.MONTH) &&
                                 mCurrentYearCalendar.get(Calendar.DAY_OF_MONTH) == mTempCalendar.get(Calendar.DAY_OF_MONTH))
                         {
-                            if (selection.getType() == YearCalendarSelection.Type.SQUARE)
+                            if (selection.getShape() == Selection.Shape.SQUARE)
                             {
                                 canvas.drawRect(mCachedRectF, selection.getPaint());
                             }
-                            else if (selection.getType() == YearCalendarSelection.Type.CIRCLE)
+                            else if (selection.getShape() == Selection.Shape.CIRCLE)
                             {
-                                canvas.drawCircle(mCachedRectF.centerX(), mCachedRectF.centerY(), (mCachedRectF.width())/2, selection.getPaint());
+                                canvas.drawCircle(mCachedRectF.centerX(), mCachedRectF.centerY(), (mCachedRectF.width()) / 2, selection.getPaint());
                             }
                         }
                     }
@@ -387,13 +388,13 @@ public class YearCalendarView extends View
                             mCurrentYearCalendar.get(Calendar.MONTH) == mTodayCalendar.get(Calendar.MONTH) &&
                             mCurrentYearCalendar.get(Calendar.DAY_OF_MONTH) == mTodayCalendar.get(Calendar.DAY_OF_MONTH))
                     {
-                        if (mSelectionType == YearCalendarSelection.Type.SQUARE)
+                        if (mSelectionShape == Selection.Shape.SQUARE)
                         {
                             canvas.drawRect(mCachedRectF, mTodayPaint);
                         }
-                        else if (mSelectionType == YearCalendarSelection.Type.CIRCLE)
+                        else if (mSelectionShape == Selection.Shape.CIRCLE)
                         {
-                            canvas.drawCircle(mCachedRectF.centerX(), mCachedRectF.centerY(), mCachedRectF.width()/2, mTodayPaint);
+                            canvas.drawCircle(mCachedRectF.centerX(), mCachedRectF.centerY(), mCachedRectF.width() / 2, mTodayPaint);
                         }
 
                         canvas.drawText(dayText, dayX + dayWidth / 2 - mCachedRect.width() / 2, dayY, mTodayTextPaint);
@@ -541,9 +542,9 @@ public class YearCalendarView extends View
         repaint();
     }
 
-    public void setSelectionType(YearCalendarSelection.Type selectionType)
+    public void setSelectionShape(Selection.Shape selectionShape)
     {
-        mSelectionType = selectionType;
+        mSelectionShape = selectionShape;
         repaint();
     }
 

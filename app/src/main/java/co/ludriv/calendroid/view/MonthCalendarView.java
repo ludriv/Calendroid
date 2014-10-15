@@ -14,6 +14,7 @@ import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import co.ludriv.calendroid.model.Selection;
 import co.ludriv.calendroid.utils.CalendarUtils;
 
 /**
@@ -32,21 +33,23 @@ public class MonthCalendarView extends View
     private int      mCurrentMonth;
     private int      mCurrentYear;
     private String[] mDayNames;
+    private Calendar mTodayCalendar;
     private Calendar mTempCalendar;
     //
 
     private HashMap<String, Region> mDayRegions;
 
     // configurable
-    private boolean mIsSelectToday      = false;
+    private boolean         mIsSelectToday    = false;
+    private Selection.Shape mSelectTodayShape = Selection.Shape.CIRCLE;
     //
-    private int     mFirstDayOfWeek     = Calendar.MONDAY; //Calendar.MONDAY;
-    private int     mLastDayOfWeek      = Calendar.SUNDAY; //Calendar.SUNDAY;
+    private int   mFirstDayOfWeek     = Calendar.MONDAY; //Calendar.MONDAY;
+    private int   mLastDayOfWeek      = Calendar.SUNDAY; //Calendar.SUNDAY;
     //
-    private float   mDayTitleLineHeight = 1;
-    private float   mDayTitleHeight     = 30;
-    private float   mDayTextPadding     = 20;
-    private float   mWeekLineHeight     = 1;
+    private float mDayTitleLineHeight = 1;
+    private float mDayTitleHeight     = 30;
+    private float mDayTextPadding     = 20;
+    private float mWeekLineHeight     = 1;
     //
 
     //
@@ -60,6 +63,7 @@ public class MonthCalendarView extends View
     private Paint mDayOtherMonthPaint;
     private Paint mDayTextOtherMonthPaint;
     private Paint mWeekLinePaint;
+    private Paint mSelectTodayPaint;
     private Paint mHightlightDayPaint;
     //
     private RectF mCanvasRect;
@@ -72,6 +76,7 @@ public class MonthCalendarView extends View
     {
         DAY_TITLE, DAY_TITLE_LINE, DAY_SEPARATOR, DAY_CURRENT_MONTH, DAY_TEXT_CURRENT_MONTH, DAY_OTHER_MONTH, DAY_TEXT_OTHER_MONTH,
         WEEK_SEPARATOR,
+        SELECT_TODAY,
         HIGHLIGHT_DAY
     }
 
@@ -109,6 +114,7 @@ public class MonthCalendarView extends View
         mCurrentYear = mCurrentMonthCalendar.get(Calendar.YEAR);
         mCurrentMonth = mCurrentMonthCalendar.get(Calendar.MONTH);
 
+        mTodayCalendar = Calendar.getInstance();
         mTempCalendar = Calendar.getInstance();
 
         //
@@ -171,6 +177,10 @@ public class MonthCalendarView extends View
         mWeekLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mWeekLinePaint.setStyle(Paint.Style.FILL);
         mWeekLinePaint.setColor(Color.DKGRAY);
+
+        mSelectTodayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mSelectTodayPaint.setStyle(Paint.Style.FILL);
+        mSelectTodayPaint.setColor(0xff00aeef);
 
         mHightlightDayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mHightlightDayPaint.setStyle(Paint.Style.FILL);
@@ -347,6 +357,26 @@ public class MonthCalendarView extends View
             mCachedRect.setEmpty();
             (dayInCurrentMonth ? mDayTextCurrentMonthPaint : mDayTextOtherMonthPaint).getTextBounds(dayText, 0, dayText.length(), mCachedRect);
 
+            // draw highlight shape if needed
+            if (mIsSelectToday && (mTempCalendar.get(Calendar.YEAR) == mTodayCalendar.get(Calendar.YEAR) &&
+                    mTempCalendar.get(Calendar.MONTH) == mTodayCalendar.get(Calendar.MONTH) &&
+                    mTempCalendar.get(Calendar.DATE) == mTodayCalendar.get(Calendar.DATE)))
+            {
+                float sideWidth = (dayWidth - 2 * mDayTextPadding);
+                mCachedRectF.setEmpty();
+                mCachedRectF.set(dayX + mDayTextPadding * 1.5f, dayY + mDayTextPadding/2, (int) (dayX + mDayTextPadding * 1.5) + sideWidth, dayY + mDayTextPadding/2 + sideWidth);
+
+                if (mSelectTodayShape == Selection.Shape.SQUARE)
+                {
+                    canvas.drawRect(mCachedRectF, mSelectTodayPaint);
+                }
+                else if (mSelectTodayShape == Selection.Shape.CIRCLE)
+                {
+                    canvas.drawCircle(mCachedRectF.centerX(), mCachedRectF.centerY(), sideWidth/2, mSelectTodayPaint);
+                }
+            }
+            //
+
             canvas.drawText(dayText, dayX + dayWidth - mCachedRect.width() - mDayTextPadding, dayY + mCachedRect.height() + mDayTextPadding, (dayInCurrentMonth ? mDayTextCurrentMonthPaint : mDayTextOtherMonthPaint));
             //
 
@@ -410,10 +440,25 @@ public class MonthCalendarView extends View
             case WEEK_SEPARATOR:
                 return mWeekLinePaint;
 
+            case SELECT_TODAY:
+                return mSelectTodayPaint;
+
             case HIGHLIGHT_DAY:
                 return mHightlightDayPaint;
         }
         return null;
+    }
+
+    public void setSelectToday(boolean isSelectToday)
+    {
+        mIsSelectToday = isSelectToday;
+        repaint();
+    }
+
+    public void setTodaySelectionShape(Selection.Shape shape)
+    {
+        mSelectTodayShape = shape;
+        repaint();
     }
 
 }

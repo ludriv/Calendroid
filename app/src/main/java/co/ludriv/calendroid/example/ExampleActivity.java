@@ -13,6 +13,7 @@ import java.util.Calendar;
 
 import co.ludriv.calendroid.R;
 import co.ludriv.calendroid.interfaces.YearCalendarTouchListener;
+import co.ludriv.calendroid.model.Selection;
 import co.ludriv.calendroid.model.YearCalendarSelection;
 import co.ludriv.calendroid.view.YearCalendarView;
 
@@ -42,7 +43,7 @@ public class ExampleActivity extends ActionBarActivity
             }
         });
 
-        mYearCalendar.setSelectionType(YearCalendarSelection.Type.CIRCLE);
+        mYearCalendar.setSelectionShape(Selection.Shape.CIRCLE);
 
         Paint monthTitlePaint = mYearCalendar.getPaint(YearCalendarView.PaintType.MONTH_TITLE);
         monthTitlePaint.setColor(Color.parseColor("#00aeef"));

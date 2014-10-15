@@ -15,6 +15,7 @@ import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 import co.ludriv.calendroid.R;
+import co.ludriv.calendroid.model.Selection;
 import co.ludriv.calendroid.utils.CalendarUtils;
 import co.ludriv.calendroid.view.MonthCalendarView;
 
@@ -138,11 +139,14 @@ public class MonthSampleActivity extends Activity implements View.OnClickListene
         @Override
         public Object instantiateItem(ViewGroup container, int position)
         {
-            View view = mInflater.inflate(R.layout.layout_month_widget, null);
+            MonthCalendarView view = (MonthCalendarView) mInflater.inflate(R.layout.layout_month_widget, null);
 
             int[] yearMonth = CalendarUtils.getYearMonthFromEraMonthIndex(position);
             //System.out.println("yearMonth= " + yearMonth[0] + " / " + yearMonth[1]);
-            ((MonthCalendarView) view).setYearMonth(yearMonth[0], yearMonth[1]);
+
+            view.setYearMonth(yearMonth[0], yearMonth[1]);
+            view.setSelectToday(true);
+            view.setTodaySelectionShape(Selection.Shape.CIRCLE);
 
             mPager.addView(view);
             return view;
