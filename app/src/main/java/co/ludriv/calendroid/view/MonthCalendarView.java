@@ -14,6 +14,7 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import co.ludriv.calendroid.interfaces.MonthCalendarTouchListener;
 import co.ludriv.calendroid.model.CalendarEvent;
@@ -630,6 +631,11 @@ public class MonthCalendarView extends View
     public void clearEvents()
     {
         mEvents.clear();
+    }
+
+    public void addAllEvents(List<CalendarEvent> events)
+    {
+        mEvents.addAll(events);
     }
 
     public void addEvent(CalendarEvent event)
