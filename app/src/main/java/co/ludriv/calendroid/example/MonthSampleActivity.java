@@ -1,6 +1,8 @@
 package co.ludriv.calendroid.example;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -15,6 +17,7 @@ import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 import co.ludriv.calendroid.R;
+import co.ludriv.calendroid.model.CalendarEvent;
 import co.ludriv.calendroid.model.Selection;
 import co.ludriv.calendroid.utils.CalendarUtils;
 import co.ludriv.calendroid.view.MonthCalendarView;
@@ -146,7 +149,15 @@ public class MonthSampleActivity extends Activity implements View.OnClickListene
 
             view.setYearMonth(yearMonth[0], yearMonth[1]);
             view.setSelectToday(true);
-            view.setTodaySelectionShape(Selection.Shape.CIRCLE);
+            view.setTodaySelectionShape(Selection.Shape.SQUARE); //CIRCLE);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.DAY_OF_MONTH, 2);
+            CalendarEvent event = new CalendarEvent(calendar.getTime(), "My event");
+            event.setShape(Selection.Shape.SQUARE);
+            event.getPaint().setColor(Color.RED);
+            event.getPaint().setStyle(Paint.Style.FILL);
+            view.addEvent(event);
 
             mPager.addView(view);
             return view;

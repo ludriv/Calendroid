@@ -7,6 +7,6 @@ abstract public class Selection
 {
     public enum Shape
     {
-        SQUARE, CIRCLE
+        INHERIT, SQUARE, CIRCLE
     }
 }

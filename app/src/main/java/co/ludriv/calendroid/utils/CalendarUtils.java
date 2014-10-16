@@ -1,6 +1,7 @@
 package co.ludriv.calendroid.utils;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by Ludovic on 14/10/2014.
@@ -10,7 +11,7 @@ public final class CalendarUtils
 
     public static int getNumberOfWeeksInMonth(int year, int month)
     {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.FRANCE);
         calendar.set(year, month, 1, 0, 0, 0);
         return calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
     }

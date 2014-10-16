@@ -11,10 +11,12 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
 import co.ludriv.calendroid.interfaces.MonthCalendarTouchListener;
+import co.ludriv.calendroid.model.CalendarEvent;
 import co.ludriv.calendroid.model.Selection;
 import co.ludriv.calendroid.utils.CalendarUtils;
 
@@ -41,18 +43,24 @@ public class MonthCalendarView extends View
 
     private HashMap<Integer, RectF>    mDayRegions;
     private MonthCalendarTouchListener mTouchListener;
+    private ArrayList<CalendarEvent>   mEvents;
+    private ArrayList<CalendarEvent>   mTempEvents;
 
     // configurable
     private boolean         mIsSelectToday      = false;
+    private Selection.Shape mDefaultShape       = Selection.Shape.CIRCLE;
+    private int             mEventPointSize     = 10;
     private Selection.Shape mSelectTodayShape   = Selection.Shape.CIRCLE;
     private boolean         mEnableDayTouches   = false;
     //
-    private int             mFirstDayOfWeek     = Calendar.MONDAY; //Calendar.MONDAY;
-    private int             mLastDayOfWeek      = Calendar.SUNDAY; //Calendar.SUNDAY;
+    private int             mFirstDayOfWeek     = Calendar.MONDAY;
+    private int             mLastDayOfWeek      = Calendar.SUNDAY;
+    private int             mMaxDayEventCount   = 1;
     //
     private float           mDayTitleLineHeight = 1;
     private float           mDayTitleHeight     = 30;
     private float           mDayTextPadding     = 20;
+    private float           mDayEventPadding    = 10;
     private float           mWeekLineHeight     = 1;
     //
 
@@ -68,6 +76,7 @@ public class MonthCalendarView extends View
     private Paint mDayTextOtherMonthPaint;
     private Paint mWeekLinePaint;
     private Paint mSelectTodayPaint;
+    private Paint mSelectTodayTextPaint;
     private Paint mHightlightDayPaint;
     //
     private RectF mCanvasRect;
@@ -80,7 +89,7 @@ public class MonthCalendarView extends View
     {
         DAY_TITLE, DAY_TITLE_LINE, DAY_SEPARATOR, DAY_CURRENT_MONTH, DAY_TEXT_CURRENT_MONTH, DAY_OTHER_MONTH, DAY_TEXT_OTHER_MONTH,
         WEEK_SEPARATOR,
-        SELECT_TODAY,
+        SELECT_TODAY, SELECT_TODAY_TEXT,
         HIGHLIGHT_DAY
     }
 
@@ -142,6 +151,9 @@ public class MonthCalendarView extends View
         }
 
         mDayRegions = new HashMap<Integer, RectF>();
+        mTouchListener = null;
+        mEvents = new ArrayList<CalendarEvent>();
+        mTempEvents = new ArrayList<CalendarEvent>();
 
         updateData();
 
@@ -188,6 +200,11 @@ public class MonthCalendarView extends View
         mSelectTodayPaint.setStyle(Paint.Style.FILL);
         mSelectTodayPaint.setColor(0xff00aeef);
 
+        mSelectTodayTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mSelectTodayTextPaint.setStyle(Paint.Style.FILL);
+        mSelectTodayTextPaint.setTextSize(20);
+        mSelectTodayTextPaint.setColor(0xffffffff);
+
         mHightlightDayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mHightlightDayPaint.setStyle(Paint.Style.FILL);
         mHightlightDayPaint.setColor(0x2600aeef); //15% alpha
@@ -214,7 +231,6 @@ public class MonthCalendarView extends View
         float bottom = mHeight - getPaddingBottom();
 
         mCanvasRect.set(left, top, right, bottom);
-
 
     }
 
@@ -347,6 +363,7 @@ public class MonthCalendarView extends View
             }
         }
 
+        int k = 0;
         for (int i = startDayDiff; i <= (lastDayOfMonth + endDayDiff + 1); i++)
         {
             // skip index 0
@@ -375,34 +392,76 @@ public class MonthCalendarView extends View
 
             String dayText = String.valueOf(mTempCalendar.get(Calendar.DATE));
 
-            // TODO: draw 'event' points
+            // draw 'event' points
+            ArrayList<CalendarEvent> dayEvents = getEventsByDay(mTempCalendar.get(Calendar.YEAR), mTempCalendar.get(Calendar.MONTH), mTempCalendar.get(Calendar.DATE));
+            if (!dayEvents.isEmpty())
+            {
+                int dayEventsCount = dayEvents.size();
+
+                float eventSpace = (dayWidth - 2 * mDayEventPadding - dayEventsCount * mEventPointSize) / (dayEventsCount + 1);
+                float eventX = dayX + mDayEventPadding + eventSpace;
+                float eventY = dayY + dayHeight - mDayEventPadding - mEventPointSize;
+
+                for (CalendarEvent calendarEvent : dayEvents)
+                {
+                    Selection.Shape eventShape = ((calendarEvent.getShape() != null && calendarEvent.getShape() != Selection.Shape.INHERIT) ? calendarEvent.getShape() : mDefaultShape);
+
+                    if (eventShape == Selection.Shape.SQUARE)
+                    {
+                        canvas.drawRect(eventX, eventY, eventX + mEventPointSize, eventY + mEventPointSize, calendarEvent.getPaint());
+                    }
+                    else if (eventShape == Selection.Shape.CIRCLE)
+                    {
+                        canvas.drawCircle(eventX + mEventPointSize / 2, eventY + mEventPointSize / 2, mEventPointSize / 2, calendarEvent.getPaint());
+                    }
+
+                    eventX += eventSpace + mEventPointSize;
+                }
+            }
             //
 
             // draw day text
             mCachedRect.setEmpty();
             (dayInCurrentMonth ? mDayTextCurrentMonthPaint : mDayTextOtherMonthPaint).getTextBounds(dayText, 0, dayText.length(), mCachedRect);
 
+            float textOriginX = dayX + dayWidth - mCachedRect.width() - mDayTextPadding;
+            float textOriginY = dayY + mCachedRect.height() + mDayTextPadding;
+            
+            float textRectLeft = textOriginX;
+            float textRectTop = textOriginY - mCachedRect.height();
+            float textRectRight = textRectLeft + mCachedRect.width();
+            float textRectBottom = textOriginY;
+
+            Paint dayTextPaint = mDayTextCurrentMonthPaint;
+            if (!dayInCurrentMonth)
+            {
+                dayTextPaint = mDayTextOtherMonthPaint;
+            }
+
             // draw highlight shape if needed
             if (mIsSelectToday && (mTempCalendar.get(Calendar.YEAR) == mTodayCalendar.get(Calendar.YEAR) &&
                     mTempCalendar.get(Calendar.MONTH) == mTodayCalendar.get(Calendar.MONTH) &&
                     mTempCalendar.get(Calendar.DATE) == mTodayCalendar.get(Calendar.DATE)))
             {
-                float sideWidth = (dayWidth - 2 * mDayTextPadding);
-                mCachedRectF.setEmpty();
-                mCachedRectF.set(dayX + mDayTextPadding * 1.5f, dayY + mDayTextPadding / 2, (int) (dayX + mDayTextPadding * 1.5) + sideWidth, dayY + mDayTextPadding / 2 + sideWidth);
+                float todayBoxWidth = Math.max(textRectRight - textRectLeft, textRectBottom - textRectTop);
+
+                float todayRectCenterX = (textRectLeft + textRectRight) / 2;
+                float todayRectCenterY = (textRectTop + textRectBottom) / 2;
 
                 if (mSelectTodayShape == Selection.Shape.SQUARE)
                 {
-                    canvas.drawRect(mCachedRectF, mSelectTodayPaint);
+                    canvas.drawRect(todayRectCenterX - todayBoxWidth, todayRectCenterY - todayBoxWidth, todayRectCenterX + todayBoxWidth, todayRectCenterY + todayBoxWidth, mSelectTodayPaint);
                 }
                 else if (mSelectTodayShape == Selection.Shape.CIRCLE)
                 {
-                    canvas.drawCircle(mCachedRectF.centerX(), mCachedRectF.centerY(), sideWidth / 2, mSelectTodayPaint);
+                    canvas.drawCircle(todayRectCenterX, todayRectCenterY, todayBoxWidth, mSelectTodayPaint);
                 }
+
+                dayTextPaint = mSelectTodayTextPaint;
             }
             //
 
-            canvas.drawText(dayText, dayX + dayWidth - mCachedRect.width() - mDayTextPadding, dayY + mCachedRect.height() + mDayTextPadding, (dayInCurrentMonth ? mDayTextCurrentMonthPaint : mDayTextOtherMonthPaint));
+            canvas.drawText(dayText, dayX + dayWidth - mCachedRect.width() - mDayTextPadding, dayY + mCachedRect.height() + mDayTextPadding, dayTextPaint);
             //
 
             // draw day line separator
@@ -411,7 +470,9 @@ public class MonthCalendarView extends View
 
             // calculate next position
             dayX += dayWidth;
-            if (dayX == right)
+            ++k;
+
+            if (k % mDayNames.length == 0)
             {
                 canvas.drawLine(left, dayY, right, dayY + (mWeekLineHeight - 1), mWeekLinePaint);
 
@@ -461,6 +522,37 @@ public class MonthCalendarView extends View
         return super.onTouchEvent(event);
     }
 
+
+    /**
+     * Private methods
+     */
+
+    private ArrayList<CalendarEvent> getEventsByDay(int year, int month, int day)
+    {
+        mTempEvents.clear();
+        Calendar tempCal = Calendar.getInstance();
+
+        for (CalendarEvent calendarEvent : mEvents)
+        {
+            tempCal.setTime(calendarEvent.getDate());
+
+            if (tempCal.get(Calendar.YEAR) == year && tempCal.get(Calendar.MONTH) == month && tempCal.get(Calendar.DATE) == day)
+            {
+                mTempEvents.add(calendarEvent);
+
+                if (mTempEvents.size() == mMaxDayEventCount)
+                {
+                    break;
+                }
+            }
+        }
+        return mTempEvents;
+    }
+
+    /**
+     * Public methods
+     */
+
     public void repaint()
     {
         postInvalidate();
@@ -504,6 +596,9 @@ public class MonthCalendarView extends View
             case SELECT_TODAY:
                 return mSelectTodayPaint;
 
+            case SELECT_TODAY_TEXT:
+                return mSelectTodayTextPaint;
+
             case HIGHLIGHT_DAY:
                 return mHightlightDayPaint;
         }
@@ -532,4 +627,18 @@ public class MonthCalendarView extends View
         mEnableDayTouches = enableDayTouches;
     }
 
+    public void clearEvents()
+    {
+        mEvents.clear();
+    }
+
+    public void addEvent(CalendarEvent event)
+    {
+        mEvents.add(event);
+    }
+
+    public void setMaxDayEventCount(int maxDayEventCount)
+    {
+        mMaxDayEventCount = maxDayEventCount;
+    }
 }
