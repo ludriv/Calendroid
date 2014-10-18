@@ -47,8 +47,9 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
 
     private MonthCalendarWidgetListener mWidgetListener;
 
-    private Day mMiminumSelectDay = null;
-    private Day mMaximumSelectDay = null;
+    private boolean mEnableSelectDays = false;
+    private Day     mMiminumSelectDay = null;
+    private Day     mMaximumSelectDay = null;
 
 
     public MonthCalendarWidget(Context context)
@@ -228,10 +229,14 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
 
             calendarView.setSelectToday(true);
             calendarView.setTodaySelectionShape(Selection.Shape.SQUARE);
-            calendarView.enableDayTouchListener(MonthCalendarWidget.this);
 
-            calendarView.setMinimumSelectDay(mMiminumSelectDay);
-            calendarView.setMaximumSelectDay(mMaximumSelectDay);
+            if (mEnableSelectDays)
+            {
+                calendarView.enableDayTouchListener(MonthCalendarWidget.this);
+
+                calendarView.setMinimumSelectDay(mMiminumSelectDay);
+                calendarView.setMaximumSelectDay(mMaximumSelectDay);
+            }
 
             calendarView.clearSelectedDates();
             calendarView.restoreSelectedDays(getSelectedDays());
@@ -331,6 +336,18 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
         return mSelectedDays;
     }
 
+    public void enableDaySelection()
+    {
+        mEnableSelectDays = true;
+        mPagerAdapter.notifyDataSetChanged();
+    }
+
+    public void disableDaySelection()
+    {
+        mEnableSelectDays = false;
+        mPagerAdapter.notifyDataSetChanged();
+    }
+
     public void setMinimumSelectDay(Day minimumDay)
     {
         mMiminumSelectDay = minimumDay;
@@ -339,6 +356,14 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
 
     public void setMaximumSelectDay(Day maximumDay)
     {
+        mMaximumSelectDay = maximumDay;
+        mPagerAdapter.notifyDataSetChanged();
+    }
+
+    public void enableDaySelection(Day minimumDay, Day maximumDay)
+    {
+        mEnableSelectDays = true;
+        mMiminumSelectDay = minimumDay;
         mMaximumSelectDay = maximumDay;
         mPagerAdapter.notifyDataSetChanged();
     }

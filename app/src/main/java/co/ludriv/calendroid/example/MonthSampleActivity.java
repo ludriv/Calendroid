@@ -25,11 +25,10 @@ public class MonthSampleActivity extends Activity implements MonthCalendarWidget
         setContentView(R.layout.activity_month);
 
         mMonthCalendarWidget = (MonthCalendarWidget) findViewById(R.id.sample_month_widget);
-        mMonthCalendarWidget.setWidgetListener(this);
 
         // enable day selection for days in range of minimum and maximum dates
-        //mMonthCalendarWidget.setMinimumSelectDay(new Day(2014, Calendar.OCTOBER, 13));
-        //mMonthCalendarWidget.setMaximumSelectDay(new Day(2014, Calendar.DECEMBER, 25));
+        mMonthCalendarWidget.setWidgetListener(this);
+        mMonthCalendarWidget.enableDaySelection(new Day(2014, Calendar.OCTOBER, 13), null);
     }
 
     @Override
