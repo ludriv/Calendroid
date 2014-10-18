@@ -15,9 +15,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
-import co.ludriv.calendroid.interfaces.MonthCalendarTouchListener;
+import co.ludriv.calendroid.interfaces.MonthCalendarViewListener;
 import co.ludriv.calendroid.model.CalendarEvent;
+import co.ludriv.calendroid.model.Day;
+import co.ludriv.calendroid.model.DayRegion;
 import co.ludriv.calendroid.model.Selection;
 import co.ludriv.calendroid.utils.CalendarUtils;
 
@@ -39,13 +42,13 @@ public class MonthCalendarView extends View
     private String[] mDayNames;
     private Calendar mTodayCalendar;
     private Calendar mTempCalendar;
-    private int      mSelectedIndex;
     //
 
-    private HashMap<Integer, RectF>    mDayRegions;
-    private MonthCalendarTouchListener mTouchListener;
-    private ArrayList<CalendarEvent>   mEvents;
-    private ArrayList<CalendarEvent>   mTempEvents;
+    private HashMap<Integer, DayRegion> mDayRegions;
+    private MonthCalendarViewListener   mTouchListener;
+    private ArrayList<CalendarEvent>    mEvents;
+    private ArrayList<CalendarEvent>    mTempEvents;
+    private ArrayList<Day>              mSelectedDays;
 
     // configurable
     private boolean         mIsSelectToday      = false;
@@ -128,10 +131,8 @@ public class MonthCalendarView extends View
         mCurrentYear = mCurrentMonthCalendar.get(Calendar.YEAR);
         mCurrentMonth = mCurrentMonthCalendar.get(Calendar.MONTH);
 
-        mTodayCalendar = Calendar.getInstance();
-        mTempCalendar = Calendar.getInstance();
-
-        mSelectedIndex = Integer.MIN_VALUE;
+        mTodayCalendar = Calendar.getInstance(Locale.FRANCE);
+        mTempCalendar = Calendar.getInstance(Locale.FRANCE);
 
         //
         // cache month/day names
@@ -151,10 +152,11 @@ public class MonthCalendarView extends View
             }
         }
 
-        mDayRegions = new HashMap<Integer, RectF>();
+        mDayRegions = new HashMap<Integer, DayRegion>();
         mTouchListener = null;
         mEvents = new ArrayList<CalendarEvent>();
         mTempEvents = new ArrayList<CalendarEvent>();
+        mSelectedDays = new ArrayList<Day>();
 
         updateData();
 
@@ -360,7 +362,7 @@ public class MonthCalendarView extends View
                     continue;
                 }
 
-                mDayRegions.put(Integer.valueOf(i), new RectF());
+                mDayRegions.put(Integer.valueOf(i), new DayRegion());
             }
         }
 
@@ -381,11 +383,12 @@ public class MonthCalendarView extends View
             }
 
             canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, (dayInCurrentMonth ? mDayCurrentMonthPaint : mDayOtherMonthPaint));
-            mDayRegions.get(i).set(dayX, dayY, dayX + dayWidth, dayY + dayHeight);
+            mDayRegions.get(i).getRectF().set(dayX, dayY, dayX + dayWidth, dayY + dayHeight);
+            mDayRegions.get(i).setDay(mTempCalendar.get(Calendar.YEAR), mTempCalendar.get(Calendar.MONTH), mTempCalendar.get(Calendar.DATE));
             //
 
             // draw block selection
-            if (mSelectedIndex == i)
+            if (mSelectedDays.contains(mDayRegions.get(i).getDay()))
             {
                 canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, mHightlightDayPaint);
             }
@@ -427,7 +430,7 @@ public class MonthCalendarView extends View
 
             float textOriginX = dayX + dayWidth - mCachedRect.width() - mDayTextPadding;
             float textOriginY = dayY + mCachedRect.height() + mDayTextPadding;
-            
+
             float textRectLeft = textOriginX;
             float textRectTop = textOriginY - mCachedRect.height();
             float textRectRight = textRectLeft + mCachedRect.width();
@@ -493,22 +496,26 @@ public class MonthCalendarView extends View
         {
             for (Integer key : mDayRegions.keySet())
             {
-                RectF region = mDayRegions.get(key);
+                DayRegion dayRegion = mDayRegions.get(key);
 
-                if (region.contains((int) event.getX(), (int) event.getY()) && event.getAction() == MotionEvent.ACTION_UP)
+                if (dayRegion.getRectF().contains((int) event.getX(), (int) event.getY()) && event.getAction() == MotionEvent.ACTION_UP)
                 {
-                    if (mSelectedIndex == Integer.MIN_VALUE || mSelectedIndex != key.intValue())
+                    if (mSelectedDays.contains(dayRegion.getDay()))
                     {
-                        mSelectedIndex = key.intValue();
-
+                        mSelectedDays.remove(dayRegion.getDay());
                         if (mTouchListener != null)
                         {
-                            mTouchListener.onDayClick();
+                            mTouchListener.onDayDeselected(dayRegion.getDay());
                         }
                     }
                     else
                     {
-                        mSelectedIndex = Integer.MIN_VALUE;
+                        mSelectedDays.add(dayRegion.getDay());
+
+                        if (mTouchListener != null)
+                        {
+                            mTouchListener.onDaySelected(dayRegion.getDay());
+                        }
                     }
 
                     repaint();
@@ -618,14 +625,16 @@ public class MonthCalendarView extends View
         repaint();
     }
 
-    public void setTouchListener(MonthCalendarTouchListener listener)
+    public void enableDayTouchListener(MonthCalendarViewListener listener)
     {
+        mEnableDayTouches = true;
         mTouchListener = listener;
     }
 
-    public void enableDayTouches(boolean enableDayTouches)
+    public void disableDayTouchListener()
     {
-        mEnableDayTouches = enableDayTouches;
+        mEnableDayTouches = false;
+        mTouchListener = null;
     }
 
     public void clearEvents()
@@ -646,5 +655,18 @@ public class MonthCalendarView extends View
     public void setMaxDayEventCount(int maxDayEventCount)
     {
         mMaxDayEventCount = maxDayEventCount;
+    }
+
+    public void clearSelectedDates()
+    {
+        mSelectedDays.clear();
+        repaint();
+    }
+
+    public void restoreSelectedDays(List<Day> days)
+    {
+        mSelectedDays.clear();
+        mSelectedDays.addAll(days);
+        repaint();
     }
 }

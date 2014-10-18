@@ -7,85 +7,9 @@
     android:paddingTop="10dp"
     android:orientation="vertical">
 
-    <LinearLayout
+    <co.ludriv.calendroid.widget.MonthCalendarWidget
+        android:id="@+id/sample_month_widget"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-
-        <Button
-            android:id="@+id/prev_month_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:paddingBottom="5dp"
-            android:layout_gravity="center_vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:textColor="@android:color/darker_gray"
-            android:paddingTop="5dp"/>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/current_month_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:textColor="#00aeef"
-                    android:textSize="20sp"/>
-
-                <TextView
-                    android:id="@+id/current_year_textview"
-                    android:layout_width="wrap_content"
-                    android:textStyle="bold"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center"
-                    android:textColor="#cccccc"
-                    android:textSize="20sp"/>
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/next_month_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:paddingBottom="5dp"
-            android:textColor="@android:color/darker_gray"
-            android:paddingLeft="20dp"
-            android:layout_gravity="center_vertical"
-            android:paddingRight="20dp"
-            android:paddingTop="5dp"/>
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="10dp"
-        android:background="#cccccc"/>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/months_pager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package co.ludriv.calendroid.utils;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -8,11 +9,20 @@ import java.util.Locale;
  */
 public final class CalendarUtils
 {
+    private static Calendar CALENDAR = Calendar.getInstance(Locale.FRANCE);
+
+
+    public static Calendar getReusableCalendar()
+    {
+        CALENDAR.clear();
+        return CALENDAR;
+    }
 
     public static int getNumberOfWeeksInMonth(int year, int month)
     {
         Calendar calendar = Calendar.getInstance(Locale.FRANCE);
         calendar.set(year, month, 1, 0, 0, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
     }
 
@@ -22,6 +32,7 @@ public final class CalendarUtils
 
         result[0] = (int) Math.floor(eraMonthIndex / 12); // year
         result[1] = (eraMonthIndex % 12); // month
+
         return result;
     }
 
@@ -29,4 +40,5 @@ public final class CalendarUtils
     {
         return year * 12 + month;
     }
+
 }
