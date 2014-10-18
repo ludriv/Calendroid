@@ -18,9 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import co.ludriv.calendroid.R;
 import co.ludriv.calendroid.interfaces.MonthCalendarViewListener;
@@ -48,6 +46,9 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
     private ArrayList<Day> mSelectedDays;
 
     private MonthCalendarWidgetListener mWidgetListener;
+
+    private Day mMiminumSelectDay = null;
+    private Day mMaximumSelectDay = null;
 
 
     public MonthCalendarWidget(Context context)
@@ -229,6 +230,9 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
             calendarView.setTodaySelectionShape(Selection.Shape.SQUARE);
             calendarView.enableDayTouchListener(MonthCalendarWidget.this);
 
+            calendarView.setMinimumSelectDay(mMiminumSelectDay);
+            calendarView.setMaximumSelectDay(mMaximumSelectDay);
+
             calendarView.clearSelectedDates();
             calendarView.restoreSelectedDays(getSelectedDays());
         }
@@ -327,5 +331,16 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
         return mSelectedDays;
     }
 
+    public void setMinimumSelectDay(Day minimumDay)
+    {
+        mMiminumSelectDay = minimumDay;
+        mPagerAdapter.notifyDataSetChanged();
+    }
+
+    public void setMaximumSelectDay(Day maximumDay)
+    {
+        mMaximumSelectDay = maximumDay;
+        mPagerAdapter.notifyDataSetChanged();
+    }
 
 }

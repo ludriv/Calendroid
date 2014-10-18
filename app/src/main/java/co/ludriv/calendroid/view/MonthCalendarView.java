@@ -50,6 +50,10 @@ public class MonthCalendarView extends View
     private ArrayList<CalendarEvent>    mTempEvents;
     private ArrayList<Day>              mSelectedDays;
 
+    private Day mMinimumSelectDay = null;
+    private Day mMaximumSelectDay = null;
+
+
     // configurable
     private boolean         mIsSelectToday      = false;
     private Selection.Shape mDefaultShape       = Selection.Shape.CIRCLE;
@@ -500,6 +504,12 @@ public class MonthCalendarView extends View
 
                 if (dayRegion.getRectF().contains((int) event.getX(), (int) event.getY()) && event.getAction() == MotionEvent.ACTION_UP)
                 {
+                    // ignore selection if not in range
+                    if ((mMinimumSelectDay != null && mMinimumSelectDay.after(dayRegion.getDay())) || (mMaximumSelectDay != null && mMaximumSelectDay.before(dayRegion.getDay())))
+                    {
+                        return true;
+                    }
+
                     if (mSelectedDays.contains(dayRegion.getDay()))
                     {
                         mSelectedDays.remove(dayRegion.getDay());
@@ -668,5 +678,15 @@ public class MonthCalendarView extends View
         mSelectedDays.clear();
         mSelectedDays.addAll(days);
         repaint();
+    }
+
+    public void setMinimumSelectDay(Day minimumSelectDay)
+    {
+        mMinimumSelectDay = minimumSelectDay;
+    }
+
+    public void setMaximumSelectDay(Day maximumSelectDay)
+    {
+        mMaximumSelectDay = maximumSelectDay;
     }
 }

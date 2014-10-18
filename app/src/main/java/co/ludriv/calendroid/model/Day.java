@@ -1,5 +1,8 @@
 package co.ludriv.calendroid.model;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 /**
  * Created by Ludovic on 18/10/2014.
  */
@@ -50,6 +53,36 @@ public class Day
     {
         return mDay;
     }
+
+
+    private static Calendar _calendar = Calendar.getInstance(Locale.FRANCE);
+
+    public boolean after(Day otherDay)
+    {
+        _calendar.clear();
+        _calendar.set(mYear, mMonth, mDay, 0, 0, 0);
+        long time1 = _calendar.getTimeInMillis();
+
+        _calendar.clear();
+        _calendar.set(otherDay.mYear, otherDay.mMonth, otherDay.mDay, 0, 0, 0);
+        long time2 = _calendar.getTimeInMillis();
+
+        return time1 > time2;
+    }
+
+    public boolean before(Day otherDay)
+    {
+        _calendar.clear();
+        _calendar.set(mYear, mMonth, mDay, 0, 0, 0);
+        long time1 = _calendar.getTimeInMillis();
+
+        _calendar.clear();
+        _calendar.set(otherDay.mYear, otherDay.mMonth, otherDay.mDay, 0, 0, 0);
+        long time2 = _calendar.getTimeInMillis();
+
+        return time1 < time2;
+    }
+
 
     @Override
     public boolean equals(Object o)

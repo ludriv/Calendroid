@@ -3,6 +3,7 @@ package co.ludriv.calendroid.example;
 import android.app.Activity;
 import android.os.Bundle;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import co.ludriv.calendroid.R;
@@ -25,6 +26,10 @@ public class MonthSampleActivity extends Activity implements MonthCalendarWidget
 
         mMonthCalendarWidget = (MonthCalendarWidget) findViewById(R.id.sample_month_widget);
         mMonthCalendarWidget.setWidgetListener(this);
+
+        // enable day selection for days in range of minimum and maximum dates
+        //mMonthCalendarWidget.setMinimumSelectDay(new Day(2014, Calendar.OCTOBER, 13));
+        //mMonthCalendarWidget.setMaximumSelectDay(new Day(2014, Calendar.DECEMBER, 25));
     }
 
     @Override
