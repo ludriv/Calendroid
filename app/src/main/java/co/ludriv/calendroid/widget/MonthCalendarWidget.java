@@ -199,7 +199,19 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
             int[] yearMonth = CalendarUtils.getYearMonthFromEraMonthIndex(position);
 
             MonthCalendarView view = new MonthCalendarView(getContext());
+            view.setTag(String.valueOf(position));
             view.setYearMonth(yearMonth[0], yearMonth[1]);
+
+            view.setSelectToday(true);
+            view.setTodaySelectionShape(mTodayShape);
+
+            if (mEnableSelectDays)
+            {
+                view.enableDayTouchListener(MonthCalendarWidget.this);
+
+                view.setMinimumSelectDay(mMiminumSelectDay);
+                view.setMaximumSelectDay(mMaximumSelectDay);
+            }
 
 
             /*
@@ -232,17 +244,11 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
 
             MonthCalendarView calendarView = (MonthCalendarView) object;
 
-            calendarView.setSelectToday(true);
-            calendarView.setTodaySelectionShape(mTodayShape);
+            // customize MonthCalendarView
+            //calendarView.getPaint(MonthCalendarView.PaintType.DISABLED_DAY).setColor(0xdddddd);
+            //
+
             calendarView.addAllEvents(mEvents);
-
-            if (mEnableSelectDays)
-            {
-                calendarView.enableDayTouchListener(MonthCalendarWidget.this);
-
-                calendarView.setMinimumSelectDay(mMiminumSelectDay);
-                calendarView.setMaximumSelectDay(mMaximumSelectDay);
-            }
 
             calendarView.clearSelectedDates();
             calendarView.restoreSelectedDays(getSelectedDays());
@@ -330,6 +336,19 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
     public void setWidgetListener(MonthCalendarWidgetListener listener)
     {
         mWidgetListener = listener;
+    }
+
+    /*
+    public Paint getViewPaint(MonthCalendarView.PaintType paintType)
+    {
+        //return ((MonthCalendarView) mPager.getFocusedChild()).getPaint(paintType);
+        //return ((MonthCalendarView) mPager.findViewWithTag(String.valueOf(mPager.getCurrentItem()))).getPaint(paintType);
+    }
+    */
+
+    public ViewPager getPager()
+    {
+        return mPager;
     }
 
     public void showTodayMonth(boolean smoothScroll)

@@ -85,7 +85,8 @@ public class MonthCalendarView extends View
     private Paint mWeekLinePaint;
     private Paint mSelectTodayPaint;
     private Paint mSelectTodayTextPaint;
-    private Paint mHightlightDayPaint;
+    private Paint mSelectedDayPaint;
+    private Paint mDisabledDayPaint;
     //
     private RectF mCanvasRect;
     private Rect  mCachedRect;
@@ -95,10 +96,23 @@ public class MonthCalendarView extends View
 
     public enum PaintType
     {
-        DAY_TITLE, DAY_TITLE_LINE, DAY_SEPARATOR, DAY_CURRENT_MONTH, DAY_TEXT_CURRENT_MONTH, DAY_OTHER_MONTH, DAY_TEXT_OTHER_MONTH,
-        WEEK_SEPARATOR,
-        SELECT_TODAY, SELECT_TODAY_TEXT,
-        HIGHLIGHT_DAY
+        DAY_TITLE,              // day title in the header eq. SUN, MON, TUE, WED, ...
+        DAY_TITLE_LINE,         // line in top and bottom of day titles
+
+        DAY_CURRENT_MONTH,      // background style of block of day used when drawn day is in current month
+        DAY_TEXT_CURRENT_MONTH, // text style of block of day used when drawn day is in current month
+
+        DAY_OTHER_MONTH,        // background style of block of day used when drawn day is not the current month
+        DAY_TEXT_OTHER_MONTH,   // text style of block of day used when drawn day is not in the current month
+
+        DAY_SEPARATOR,          // day vertical separator
+        WEEK_SEPARATOR,         // style of week separator
+
+        SELECT_TODAY,           // background style of today if `mIsSelectToday` equals true
+        SELECT_TODAY_TEXT,      // text of today if `mIsSelectToday` equals true
+
+        SELECTED_DAY,           // selected day
+        DISABLED_DAY            // disabled day
     }
 
 
@@ -125,7 +139,6 @@ public class MonthCalendarView extends View
 
     private void init()
     {
-        //
         mCurrentMonthCalendar = Calendar.getInstance();
         mCurrentMonthCalendar.set(Calendar.DATE, 1);
         mCurrentMonthCalendar.set(Calendar.HOUR, 0);
@@ -212,10 +225,15 @@ public class MonthCalendarView extends View
         mSelectTodayTextPaint.setTextSize(20);
         mSelectTodayTextPaint.setColor(0xffffffff);
 
-        mHightlightDayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mHightlightDayPaint.setStyle(Paint.Style.FILL);
-        mHightlightDayPaint.setColor(0x2600aeef); //15% alpha
+        mSelectedDayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mSelectedDayPaint.setStyle(Paint.Style.FILL);
+        mSelectedDayPaint.setColor(0x2600aeef); //15% alpha
+
+        mDisabledDayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mDisabledDayPaint.setStyle(Paint.Style.FILL);
+        mDisabledDayPaint.setColor(0xffcccccc);
         //
+
         mCanvasRect = new RectF();
         mCachedRect = new Rect();
         mCachedRectF = new RectF();
@@ -391,10 +409,16 @@ public class MonthCalendarView extends View
             mDayRegions.get(i).setDay(mTempCalendar.get(Calendar.YEAR), mTempCalendar.get(Calendar.MONTH), mTempCalendar.get(Calendar.DATE));
             //
 
-            // draw block selection
-            if (mSelectedDays.contains(mDayRegions.get(i).getDay()))
+            // draw disabled block:
+            // if current day is before miminum selectable date or if current day is after maximum selectable date
+            if ((mMinimumSelectDay != null && mMinimumSelectDay.after(mDayRegions.get(i).getDay())) || (mMaximumSelectDay != null && mMaximumSelectDay.before(mDayRegions.get(i).getDay())))
             {
-                canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, mHightlightDayPaint);
+                canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, mDisabledDayPaint);
+            }
+            // draw block selection
+            else if (mSelectedDays.contains(mDayRegions.get(i).getDay()))
+            {
+                canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, mSelectedDayPaint);
             }
             //
 
@@ -617,8 +641,11 @@ public class MonthCalendarView extends View
             case SELECT_TODAY_TEXT:
                 return mSelectTodayTextPaint;
 
-            case HIGHLIGHT_DAY:
-                return mHightlightDayPaint;
+            case SELECTED_DAY:
+                return mSelectedDayPaint;
+
+            case DISABLED_DAY:
+                return mDisabledDayPaint;
         }
         return null;
     }
