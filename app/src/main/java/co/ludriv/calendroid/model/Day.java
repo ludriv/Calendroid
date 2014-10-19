@@ -1,6 +1,7 @@
 package co.ludriv.calendroid.model;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -83,6 +84,13 @@ public class Day
         return time1 < time2;
     }
 
+    public Date toDate()
+    {
+        _calendar.clear();
+        _calendar.set(mYear, mMonth, mDay, 0, 0, 0);
+        return _calendar.getTime();
+    }
+    
 
     @Override
     public boolean equals(Object o)

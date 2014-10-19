@@ -25,8 +25,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d22154a3-cb0c-43b7-a4b9-f0f56c8201a4" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/widget/MonthCalendarWidget.java" afterPath="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/widget/MonthCalendarWidget.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/model/Day.java" afterPath="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/model/Day.java" />
     </list>
     <ignored path="gradle.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -94,20 +93,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Day.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Day.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/model/Day.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="990" max-vertical-offset="1740">
-              <caret line="66" column="19" selection-start-line="66" selection-start-column="19" selection-end-line="66" selection-end-column="19" />
+            <state vertical-scroll-proportion="1.1777778" vertical-offset="240" max-vertical-offset="1425">
+              <caret line="92" column="4" selection-start-line="92" selection-start-column="4" selection-end-line="92" selection-end-column="4" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MonthCalendarWidget.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="MonthCalendarWidget.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/widget/MonthCalendarWidget.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.30666667" vertical-offset="2793" max-vertical-offset="4695">
+            <state vertical-scroll-proportion="0.0" vertical-offset="2793" max-vertical-offset="4695">
               <caret line="232" column="72" selection-start-line="232" selection-start-column="72" selection-end-line="232" selection-end-column="72" />
               <folding>
                 <element signature="class#VerticalPageTransformer#0;class#MonthCalendarWidget#0" expanded="false" />
@@ -1170,11 +1169,11 @@
         <option value="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/utils/CalendarUtils.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/utils/DayUtils.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/model/DayRegion.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/model/Day.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/view/MonthCalendarView.java" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/example/MonthSampleActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/widget/MonthCalendarWidget.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/model/Day.java" />
       </list>
     </option>
   </component>
@@ -2133,6 +2132,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.35714287" vertical-offset="0" max-vertical-offset="630">
           <caret line="15" column="39" selection-start-line="15" selection-start-column="39" selection-end-line="15" selection-end-column="39" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2168,6 +2170,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3674833" vertical-offset="0" max-vertical-offset="449">
           <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2204,14 +2207,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="571" max-vertical-offset="1620">
           <caret line="98" column="14" selection-start-line="98" selection-start-column="14" selection-end-line="98" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/model/Day.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="646" max-vertical-offset="1695">
-          <caret line="66" column="19" selection-start-line="66" selection-start-column="19" selection-end-line="66" selection-end-column="19" />
           <folding />
         </state>
       </provider>
@@ -2263,11 +2258,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/widget/MonthCalendarWidget.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.30666667" vertical-offset="2793" max-vertical-offset="4695">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2793" max-vertical-offset="4695">
           <caret line="232" column="72" selection-start-line="232" selection-start-column="72" selection-end-line="232" selection-end-column="72" />
           <folding>
             <element signature="class#VerticalPageTransformer#0;class#MonthCalendarWidget#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/co/ludriv/calendroid/model/Day.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.1777778" vertical-offset="240" max-vertical-offset="1425">
+          <caret line="92" column="4" selection-start-line="92" selection-start-column="4" selection-end-line="92" selection-end-column="4" />
+          <folding />
         </state>
       </provider>
     </entry>
