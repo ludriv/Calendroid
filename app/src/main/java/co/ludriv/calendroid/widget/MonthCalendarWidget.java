@@ -23,6 +23,7 @@ import java.util.List;
 import co.ludriv.calendroid.R;
 import co.ludriv.calendroid.interfaces.MonthCalendarViewListener;
 import co.ludriv.calendroid.interfaces.MonthCalendarWidgetListener;
+import co.ludriv.calendroid.model.CalendarEvent;
 import co.ludriv.calendroid.model.Day;
 import co.ludriv.calendroid.model.Selection;
 import co.ludriv.calendroid.utils.CalendarUtils;
@@ -40,16 +41,19 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
     private ViewPager mPager;
     private Adapter   mPagerAdapter;
 
-    private String[]       mMonths;
-    private int            mYear;
-    private int            mMonth;
-    private ArrayList<Day> mSelectedDays;
+    private String[]                 mMonths;
+    private int                      mYear;
+    private int                      mMonth;
+    private ArrayList<Day>           mSelectedDays;
+    private ArrayList<CalendarEvent> mEvents;
 
     private MonthCalendarWidgetListener mWidgetListener;
 
     private boolean mEnableSelectDays = false;
     private Day     mMiminumSelectDay = null;
     private Day     mMaximumSelectDay = null;
+
+    private Selection.Shape mTodayShape = Selection.Shape.CIRCLE;
 
 
     public MonthCalendarWidget(Context context)
@@ -87,6 +91,7 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
         int nextMonth = calendar.get(Calendar.MONTH);
 
         mSelectedDays = new ArrayList<Day>();
+        mEvents = new ArrayList<CalendarEvent>();
 
         mPreviousButton = (Button) findViewById(R.id.widget_month_previous_button);
         mPreviousButton.setOnClickListener(this);
@@ -228,7 +233,8 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
             MonthCalendarView calendarView = (MonthCalendarView) object;
 
             calendarView.setSelectToday(true);
-            calendarView.setTodaySelectionShape(Selection.Shape.SQUARE);
+            calendarView.setTodaySelectionShape(mTodayShape);
+            calendarView.addAllEvents(mEvents);
 
             if (mEnableSelectDays)
             {
@@ -365,6 +371,17 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
         mEnableSelectDays = true;
         mMiminumSelectDay = minimumDay;
         mMaximumSelectDay = maximumDay;
+        mPagerAdapter.notifyDataSetChanged();
+    }
+
+    public void setTodayShape(Selection.Shape shape)
+    {
+        mTodayShape = shape;
+    }
+
+    public void setEvents(ArrayList<CalendarEvent> events)
+    {
+        mEvents = events;
         mPagerAdapter.notifyDataSetChanged();
     }
 
