@@ -53,7 +53,8 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
     private Day     mMiminumSelectDay = null;
     private Day     mMaximumSelectDay = null;
 
-    private Selection.Shape mTodayShape = Selection.Shape.CIRCLE;
+    private Selection.Shape                    mTodayShape       = Selection.Shape.CIRCLE;
+    private MonthCalendarView.DaySelectionType mDaySelectionType = MonthCalendarView.DaySelectionType.FILL_RECT;
 
 
     public MonthCalendarWidget(Context context)
@@ -250,6 +251,8 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
 
             calendarView.addAllEvents(mEvents);
 
+            calendarView.setDaySelectionType(mDaySelectionType);
+
             calendarView.clearSelectedDates();
             calendarView.restoreSelectedDays(getSelectedDays());
         }
@@ -404,4 +407,8 @@ public class MonthCalendarWidget extends LinearLayout implements View.OnClickLis
         mPagerAdapter.notifyDataSetChanged();
     }
 
+    public void setDaySelectionType(MonthCalendarView.DaySelectionType daySelectionType)
+    {
+        mDaySelectionType = daySelectionType;
+    }
 }

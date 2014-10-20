@@ -55,21 +55,22 @@ public class MonthCalendarView extends View
 
 
     // configurable
-    private boolean         mIsSelectToday      = false;
-    private Selection.Shape mDefaultShape       = Selection.Shape.CIRCLE;
-    private int             mEventPointSize     = 10;
-    private Selection.Shape mSelectTodayShape   = Selection.Shape.CIRCLE;
-    private boolean         mEnableDayTouches   = false;
+    private boolean          mIsSelectToday      = false;
+    private Selection.Shape  mDefaultShape       = Selection.Shape.CIRCLE;
+    private int              mEventPointSize     = 10;
+    private Selection.Shape  mSelectTodayShape   = Selection.Shape.CIRCLE;
+    private boolean          mEnableDayTouches   = false;
+    private DaySelectionType mDaySelectionType   = DaySelectionType.DAY_RECT;
     //
-    private int             mFirstDayOfWeek     = Calendar.MONDAY;
-    private int             mLastDayOfWeek      = Calendar.SUNDAY;
-    private int             mMaxDayEventCount   = 1;
+    private int              mFirstDayOfWeek     = Calendar.MONDAY;
+    private int              mLastDayOfWeek      = Calendar.SUNDAY;
+    private int              mMaxDayEventCount   = 1;
     //
-    private float           mDayTitleLineHeight = 1;
-    private float           mDayTitleHeight     = 30;
-    private float           mDayTextPadding     = 20;
-    private float           mDayEventPadding    = 10;
-    private float           mWeekLineHeight     = 1;
+    private float            mDayTitleLineHeight = 1;
+    private float            mDayTitleHeight     = 30;
+    private float            mDayTextPadding     = 20;
+    private float            mDayEventPadding    = 10;
+    private float            mWeekLineHeight     = 1;
     //
 
     //
@@ -113,6 +114,13 @@ public class MonthCalendarView extends View
 
         SELECTED_DAY,           // selected day
         DISABLED_DAY            // disabled day
+    }
+
+    public enum DaySelectionType
+    {
+        FILL_RECT,              // as default: fill whole day block
+        DAY_RECT,               // draw a square around the text of day
+        DAY_ROUND               // draw a circle around the text of day
     }
 
 
@@ -415,11 +423,6 @@ public class MonthCalendarView extends View
             {
                 canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, mDisabledDayPaint);
             }
-            // draw block selection
-            else if (mSelectedDays.contains(mDayRegions.get(i).getDay()))
-            {
-                canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, mSelectedDayPaint);
-            }
             //
 
             String dayText = String.valueOf(mTempCalendar.get(Calendar.DATE));
@@ -452,7 +455,7 @@ public class MonthCalendarView extends View
             }
             //
 
-            // draw day text
+            // prepare day text
             mCachedRect.setEmpty();
             (dayInCurrentMonth ? mDayTextCurrentMonthPaint : mDayTextOtherMonthPaint).getTextBounds(dayText, 0, dayText.length(), mCachedRect);
 
@@ -469,6 +472,29 @@ public class MonthCalendarView extends View
             {
                 dayTextPaint = mDayTextOtherMonthPaint;
             }
+            //
+
+
+            // draw block selection
+            if (mSelectedDays.contains(mDayRegions.get(i).getDay()))
+            {
+                float todayBoxWidth = Math.max(textRectRight - textRectLeft, textRectBottom - textRectTop);
+                
+                if (mDaySelectionType == DaySelectionType.FILL_RECT)
+                {
+                    canvas.drawRect(dayX, dayY, dayX + dayWidth, dayY + dayHeight, mSelectedDayPaint);
+                }
+                else if (mDaySelectionType == DaySelectionType.DAY_RECT)
+                {
+                    canvas.drawRect(textRectLeft - todayBoxWidth / 2, textRectTop - todayBoxWidth / 2, textRectRight + todayBoxWidth / 2, textRectBottom + todayBoxWidth / 2, mSelectedDayPaint);
+                }
+                else if (mDaySelectionType == DaySelectionType.DAY_ROUND)
+                {
+                    canvas.drawCircle((textRectLeft + textRectRight) / 2, (textRectTop + textRectBottom) / 2, todayBoxWidth, mSelectedDayPaint);
+                }
+            }
+            //
+
 
             // draw highlight shape if needed
             if (mIsSelectToday && (mTempCalendar.get(Calendar.YEAR) == mTodayCalendar.get(Calendar.YEAR) &&
@@ -493,6 +519,7 @@ public class MonthCalendarView extends View
             }
             //
 
+            // draw day text
             canvas.drawText(dayText, dayX + dayWidth - mCachedRect.width() - mDayTextPadding, dayY + mCachedRect.height() + mDayTextPadding, dayTextPaint);
             //
 
@@ -716,4 +743,11 @@ public class MonthCalendarView extends View
     {
         mMaximumSelectDay = maximumSelectDay;
     }
+
+    public void setDaySelectionType(DaySelectionType daySelectionType)
+    {
+        mDaySelectionType = daySelectionType;
+        repaint();
+    }
+
 }

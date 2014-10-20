@@ -9,6 +9,7 @@ import java.util.Date;
 import co.ludriv.calendroid.R;
 import co.ludriv.calendroid.interfaces.MonthCalendarWidgetListener;
 import co.ludriv.calendroid.model.Day;
+import co.ludriv.calendroid.view.MonthCalendarView;
 import co.ludriv.calendroid.widget.MonthCalendarWidget;
 
 /**
@@ -29,6 +30,8 @@ public class MonthSampleActivity extends Activity implements MonthCalendarWidget
         // enable day selection for days in range of minimum and maximum dates
         mMonthCalendarWidget.setWidgetListener(this);
         mMonthCalendarWidget.enableDaySelection(new Day(2014, Calendar.OCTOBER, 13), null);
+
+        mMonthCalendarWidget.setDaySelectionType(MonthCalendarView.DaySelectionType.DAY_ROUND);
     }
 
     @Override
